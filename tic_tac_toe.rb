@@ -73,3 +73,17 @@
     #a method that announced the winner 
   
 # rubocop: enable all
+
+class TicTacToe
+  @@number_of_moves = 0 
+  @@game_board = Array.new(3) {Array.new(3)}
+
+  def game_board
+    @@game_board
+  end
+
+  def place_symbol(row,column,symbol)
+    @@game_board[row][column] = symbol
+  end
+ 
+end
