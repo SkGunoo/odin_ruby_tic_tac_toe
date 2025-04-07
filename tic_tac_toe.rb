@@ -78,6 +78,13 @@ class TicTacToe
   @@number_of_moves = 0 
   @@game_board = Array.new(3) {Array.new(3)}
 
+  attr_reader :player_one, :player_two
+
+  def initialize
+    @player_one = Player.new(nil,"X")
+    @player_two = Player.new(nil,"O")
+  end
+
   def game_board
     @@game_board
   end
@@ -85,5 +92,49 @@ class TicTacToe
   def place_symbol(row,column,symbol)
     @@game_board[row][column] = symbol
   end
- 
+
+  def draw_board
+    3.times { |number| puts draw_row(@@game_board[number])}
+  end
+
+
+  def draw_row(row)
+    tiles = Array.new(3)
+    3.times { |number| tiles[number] = row[number] == nil ? "   " : " #{row[number]} " }
+    "#{tiles[0]}|#{tiles[1]}|#{tiles[2]}"
+  end
+
+  
 end
+
+# class Player < TicTacToe
+
+#   attr_accessor :symbol
+
+#   def initialize(name,symbol)
+#     print " what is your name?: "
+#     @name = gets.chomp
+#     @symbol = symbol
+#     puts "hello #{@name} welcome to the game "
+#     puts ""
+#   end
+
+#   def player_turn(row,column)
+#     place_symbol(row,column,symbol)
+#   end
+
+
+# end
+
+
+test = TicTacToe.new
+
+# test.game_board[0][1] = "X"
+
+# a = Player.new(nil,"X")
+# b = Player.new(nil,"O")
+
+test.player_one.player_turn(0,1)
+test.player_two.player_turn(0,2)
+
+test.draw_board()
