@@ -85,5 +85,28 @@ class TicTacToe
   def place_symbol(row,column,symbol)
     @@game_board[row][column] = symbol
   end
- 
+
+  def draw_board
+    3.times { |number| puts draw_row(@@game_board[number])}
+  end
+
+
+  def draw_row(row)
+    tiles = [draw_symbol(row[0]),draw_symbol(row[1]),draw_symbol(row[2])]
+    return "#{tiles[0]}|#{tiles[1]}|#{tiles[2]}"
+  end
+
+  def draw_symbol(tile)
+    if tile == nil
+      return "   "
+    else
+      return " #{tile} "
+    end
+  end
 end
+
+test = TicTacToe.new
+
+test.game_board[0][1] = "X"
+
+test.draw_board()
