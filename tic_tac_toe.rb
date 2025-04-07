@@ -107,24 +107,24 @@ class TicTacToe
   
 end
 
-# class Player < TicTacToe
+class Player < TicTacToe
 
-#   attr_accessor :symbol
+  attr_accessor :symbol
 
-#   def initialize(name,symbol)
-#     print " what is your name?: "
-#     @name = gets.chomp
-#     @symbol = symbol
-#     puts "hello #{@name} welcome to the game "
-#     puts ""
-#   end
+  def initialize(name,symbol)
+    print " what is your name?: "
+    @name = gets.chomp
+    @symbol = symbol
+    puts "hello #{@name} welcome to the game "
+    puts ""
+  end
 
-#   def player_turn(row,column)
-#     place_symbol(row,column,symbol)
-#   end
+  def player_turn(row,column)
+    place_symbol(row,column,symbol)
+  end
 
 
-# end
+end
 
 
 test = TicTacToe.new
