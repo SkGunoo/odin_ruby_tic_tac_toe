@@ -91,6 +91,8 @@ class TicTacToe
 
   def place_symbol(row,column,symbol)
     @@game_board[row][column] = symbol
+    draw_board
+    puts "placed #{symbol} to row: #{row + 1} column: #{column + 1}"
   end
 
   def draw_board
@@ -104,12 +106,41 @@ class TicTacToe
     "#{tiles[0]}|#{tiles[1]}|#{tiles[2]}"
   end
 
+  def overlapping?(row, column)
+    if(@@game_board[row][column] == nil)
+      false
+    else
+      puts "You cannot place a symbol on a tile that already has one."
+      true
+    end
+  end
+
+  def ask_player_for_placement(player_name)
+    answer = Array.new(2)  
+    print "#{player_name } which row you want to place the symbol?(1-3): "
+    answer[0] = ask_until_number_input()
+    print "which column you want to place the symbol?(1-3): "
+    answer[1] = ask_until_number_input()
+    answer
+  end
+
+  def ask_until_number_input
+    numbers = [1,2,3]
+    answer = gets.chomp.to_i
+    unless numbers.include?(answer)
+      puts "type the number between 1-3"
+      answer = gets.chomp.to_i      
+    end
+    answer - 1
+  end
+
+
   
 end
 
 class Player < TicTacToe
 
-  attr_accessor :symbol
+  attr_accessor :symbol, :name
 
   def initialize(name,symbol)
     print " what is your name?: "
@@ -119,8 +150,13 @@ class Player < TicTacToe
     puts ""
   end
 
-  def player_turn(row,column)
-    place_symbol(row,column,symbol)
+  def player_turn
+    answer = Array.new(2)
+    loop do 
+      answer = ask_player_for_placement(name)
+      break if !overlapping?(answer[0],answer[1])
+    end
+    place_symbol(answer[0],answer[1],symbol)
   end
 
 
@@ -134,7 +170,7 @@ test = TicTacToe.new
 # a = Player.new(nil,"X")
 # b = Player.new(nil,"O")
 
-test.player_one.player_turn(0,1)
-test.player_two.player_turn(0,2)
+test.player_one.player_turn
+test.player_two.player_turn
 
 test.draw_board()
