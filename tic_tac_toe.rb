@@ -156,13 +156,16 @@ class TicTacToe
     player.player_turn
     win_check(player)
     @@number_of_moves += 1 
-    @@game_done = true if @@number_of_moves == 9    
+    draw_check
+    @@game_done = true if @@number_of_moves == 9
+    
   end
 
   def win_check(player)
     row_win_check(player)
     column_check(player)
     diagnal_check(player)
+    draw_check
     if @@game_done == true 
       puts " #{@@winner} is the winnner!"
     end
@@ -193,9 +196,15 @@ class TicTacToe
     diagnal_one = [@@game_board[0][0],@@game_board[1][1],@@game_board[2][2]]
     diagnal_two = [@@game_board[0][2],@@game_board[1][1],@@game_board[2][0]]
     @@game_done, @@winner = true, player.name if winning_patern == diagnal_one || winning_patern == diagnal_two
-
   end
 
+  def draw_check
+    if @@number_of_moves == 9 && @@game_done == false
+      @@game_done = true 
+      puts "Draw, there is no winners"
+    end 
+  end
+  
 end
 
 class Player < TicTacToe
