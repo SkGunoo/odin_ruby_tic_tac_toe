@@ -77,10 +77,13 @@
 class TicTacToe
   @@number_of_moves = 0 
   @@game_board = Array.new(3) {Array.new(3)}
+  @@game_done = false
+  @@winner = nil
 
   attr_reader :player_one, :player_two
 
   def initialize
+    welcome_message()
     @player_one = Player.new(nil,"X")
     @player_two = Player.new(nil,"O")
   end
@@ -98,7 +101,6 @@ class TicTacToe
   def draw_board
     3.times { |number| puts draw_row(@@game_board[number])}
   end
-
 
   def draw_row(row)
     tiles = Array.new(3)
@@ -134,43 +136,101 @@ class TicTacToe
     answer - 1
   end
 
+  def welcome_message
+    puts "welcome, you know how to play tic-tac-toe right? "
+    puts ""
+  end
 
+  def play_a_match
+    while @@game_done != true
+      players_turn(player_one)
+      break if @@game_done == true
+      players_turn(player_two)
+    end
+  end
   
+  def players_turn(player)
+    player.player_turn
+    win_check(player)
+    @@number_of_moves += 1 
+    @@game_done = true if @@number_of_moves == 9    
+  end
+
+  def win_check(player)
+    row_win_check(player)
+    column_check(player)
+    diagnal_check(player)
+    if @@game_done == true 
+      puts " #{@@winner} is the winnner!"
+    end
+  end
+  
+  def row_win_check(player)
+    winning_patern = [player.symbol,player.symbol,player.symbol]
+    @@game_board.each do |row|
+      if row == winning_patern
+        @@game_done =true 
+        @@winner = player.name
+      end
+    end
+  end
+
+  def column_check(player)
+    winning_patern = [player.symbol,player.symbol,player.symbol]
+    3.times do |index|
+      if winning_patern == [@@game_board[0][index],@@game_board[1][index],@@game_board[2][index]] 
+        @@game_done =true 
+        @@winner = player.name
+      end
+    end
+  end
+
+  def diagnal_check(player)
+    winning_patern = [player.symbol,player.symbol,player.symbol]
+    diagnal_one = [@@game_board[0][0],@@game_board[1][1],@@game_board[2][2]]
+    diagnal_two = [@@game_board[0][2],@@game_board[1][1],@@game_board[2][0]]
+    @@game_done, @@winner = true, player.name if winning_patern == diagnal_one || winning_patern == diagnal_two
+
+  end
+
 end
 
 class Player < TicTacToe
-
+  @@player_count = 1
   attr_accessor :symbol, :name
 
   def initialize(name,symbol)
-    print " what is your name?: "
+    print "plyer#{@@player_count} what is your name?: "
     @name = gets.chomp
     @symbol = symbol
     puts "hello #{@name} welcome to the game "
     puts ""
+    @@player_count += 1
   end
 
   def player_turn
     answer = Array.new(2)
-    loop do 
+    loop do
       answer = ask_player_for_placement(name)
-      break if !overlapping?(answer[0],answer[1])
+      break unless overlapping?(answer[0],answer[1])
     end
-    place_symbol(answer[0],answer[1],symbol)
+    place_symbol(answer[0], answer[1], symbol)
   end
 
+  
 
 end
 
 
 test = TicTacToe.new
 
+test.play_a_match
 # test.game_board[0][1] = "X"
 
 # a = Player.new(nil,"X")
 # b = Player.new(nil,"O")
 
-test.player_one.player_turn
-test.player_two.player_turn
+# test.player_one.player_turn
+# test.player_two.player_turn
 
-test.draw_board()
+# test.draw_board()
