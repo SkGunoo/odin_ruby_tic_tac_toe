@@ -95,11 +95,14 @@ class TicTacToe
   def place_symbol(row,column,symbol)
     @@game_board[row][column] = symbol
     draw_board
-    puts "placed #{symbol} to row: #{row + 1} column: #{column + 1}"
+    puts "placed #{symbol} to row: #{row + 1} column: #{column + 1} "
+    puts""
   end
 
   def draw_board
+    puts ""
     3.times { |number| puts draw_row(@@game_board[number])}
+    puts ""
   end
 
   def draw_row(row)
@@ -119,7 +122,7 @@ class TicTacToe
 
   def ask_player_for_placement(player_name)
     answer = Array.new(2)  
-    print "#{player_name } which row you want to place the symbol?(1-3): "
+    print "#{player_name } which row you want to place the symbol?(1-3):"
     answer[0] = ask_until_number_input()
     print "which column you want to place the symbol?(1-3): "
     answer[1] = ask_until_number_input()
@@ -131,7 +134,7 @@ class TicTacToe
     answer = gets.chomp.to_i
     unless numbers.include?(answer)
       puts "type the number between 1-3"
-      answer = gets.chomp.to_i      
+      answer = gets.chomp.to_i
     end
     answer - 1
   end
@@ -203,7 +206,7 @@ class Player < TicTacToe
     print "plyer#{@@player_count} what is your name?: "
     @name = gets.chomp
     @symbol = symbol
-    puts "hello #{@name} welcome to the game "
+    puts "\nhello #{@name} welcome to the game "
     puts ""
     @@player_count += 1
   end
