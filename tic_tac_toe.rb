@@ -130,13 +130,13 @@ class TicTacToe
   end
 
   def ask_until_number_input
-    numbers = [1,2,3]
-    answer = gets.chomp.to_i
-    unless numbers.include?(answer)
+    numbers = ["1","2","3"]
+    answer = gets.chomp
+    until numbers.include?(answer)
       puts "type the number between 1-3"
-      answer = gets.chomp.to_i
+      answer = gets.chomp
     end
-    answer - 1
+    answer.to_i - 1
   end
 
   def welcome_message
