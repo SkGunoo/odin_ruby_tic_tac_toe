@@ -1,3 +1,169 @@
+class TicTacToe
+  #tracking draw/game end condifion with @@number of moves
+  @@number_of_moves = 0
+  @@game_board = Array.new(3) { Array.new(3) }
+  @@game_done = false
+  @@winner = nil
+
+  attr_reader :player_one, :player_two
+
+  def initialize
+    welcome_message
+    #setting symbols for players here 
+    @player_one = Player.new(nil, 'X')
+    @player_two = Player.new(nil, 'O')
+  end
+
+  def welcome_message
+    puts "welcome, you know how to play tic-tac-toe right?",""
+
+  end
+
+  def game_board
+    @@game_board
+  end
+
+  def place_symbol(row, column, symbol)
+    @@game_board[row][column] = symbol
+    draw_board
+    puts "placed #{symbol} to row: #{row + 1} column: #{column + 1} ",''
+  end
+
+  def draw_board
+    puts ''
+    3.times { |number| puts draw_row(@@game_board[number]) }
+    puts ''
+  end
+
+  def draw_row(row)
+    tiles = Array.new(3)
+    #3 empty spaces size for empty tile
+    3.times { |number| tiles[number] = row[number].nil? ? '   ' : " #{row[number]} " }
+    "#{tiles[0]}|#{tiles[1]}|#{tiles[2]}"
+  end
+
+  def overlapping?(row, column)
+    if @@game_board[row][column].nil?
+      false
+    else
+      puts 'You cannot place a symbol on a tile that already has one.'
+      true
+    end
+  end
+
+  def ask_player_for_placement(player_name)
+    answer = Array.new(2)
+    print "#{player_name} which row you want to place the symbol?(1-3):"
+    answer[0] = ask_until_number_input
+    print 'which column you want to place the symbol?(1-3): '
+    answer[1] = ask_until_number_input
+    answer
+  end
+
+  def ask_until_number_input
+    numbers = %w[1 2 3]
+    answer = gets.chomp
+    until numbers.include?(answer)
+      puts 'type the number between 1-3'
+      answer = gets.chomp
+    end
+    #minus one to answer because array index start from 0
+    answer.to_i - 1
+  end
+
+  def play_a_match
+    while @@game_done != true
+      players_turn(player_one)
+      break if @@game_done == true
+
+      players_turn(player_two)
+    end
+  end
+
+  def players_turn(player)
+    player.player_turn
+    win_check(player)
+    #need to update the number of moves before draw check
+    @@number_of_moves += 1
+    draw_check
+    @@game_done = true if @@number_of_moves == 9
+  end
+
+  def win_check(player)
+    row_win_check(player)
+    column_check(player)
+    diagnal_check(player)
+    draw_check
+    return unless @@game_done == true
+
+    puts " #{@@winner} is the winnner!"
+  end
+
+  def row_win_check(player)
+    winning_patern = [player.symbol, player.symbol, player.symbol]
+    @@game_board.each do |row|
+      if row == winning_patern
+        @@game_done = true
+        @@winner = player.name
+      end
+    end
+  end
+
+  def column_check(player)
+    winning_patern = [player.symbol, player.symbol, player.symbol]
+    3.times do |index|
+      if winning_patern == [@@game_board[0][index], @@game_board[1][index], @@game_board[2][index]]
+        @@game_done = true
+        @@winner = player.name
+      end
+    end
+  end
+
+  def diagnal_check(player)
+    winning_patern = [player.symbol, player.symbol, player.symbol]
+    diagnal_one = [@@game_board[0][0], @@game_board[1][1], @@game_board[2][2]]
+    diagnal_two = [@@game_board[0][2], @@game_board[1][1], @@game_board[2][0]]
+    return unless winning_patern == diagnal_one || winning_patern == diagnal_two
+
+    @@game_done = true
+    @@winner = player.name
+  end
+
+  def draw_check
+    return unless @@number_of_moves == 9 && @@game_done == false
+
+    @@game_done = true
+    puts 'Draw, there is no winners'
+  end
+end
+
+class Player < TicTacToe
+  @@player_count = 1
+  attr_accessor :symbol, :name
+
+  def initialize(_name, symbol)
+    print "plyer#{@@player_count} what is your name?: "
+    @name = gets.chomp
+    @symbol = symbol
+    puts "\nhello #{@name} welcome to the game "
+    puts ''
+    @@player_count += 1
+  end
+
+  def player_turn
+    answer = Array.new(2)
+    loop do
+      answer = ask_player_for_placement(name)
+      break unless overlapping?(answer[0], answer[1])
+    end
+    place_symbol(answer[0], answer[1], symbol)
+  end
+end
+
+test = TicTacToe.new
+
+test.play_a_match
+
 # rubocop: disable all
 #rules to follow: 
   # max 100 lines per class
@@ -73,176 +239,3 @@
     #a method that announced the winner 
   
 # rubocop: enable all
-
-class TicTacToe
-  @@number_of_moves = 0 
-  @@game_board = Array.new(3) {Array.new(3)}
-  @@game_done = false
-  @@winner = nil
-
-  attr_reader :player_one, :player_two
-
-  def initialize
-    welcome_message()
-    @player_one = Player.new(nil,"X")
-    @player_two = Player.new(nil,"O")
-  end
-
-  def game_board
-    @@game_board
-  end
-
-  def place_symbol(row,column,symbol)
-    @@game_board[row][column] = symbol
-    draw_board
-    puts "placed #{symbol} to row: #{row + 1} column: #{column + 1} "
-    puts""
-  end
-
-  def draw_board
-    puts ""
-    3.times { |number| puts draw_row(@@game_board[number])}
-    puts ""
-  end
-
-  def draw_row(row)
-    tiles = Array.new(3)
-    3.times { |number| tiles[number] = row[number] == nil ? "   " : " #{row[number]} " }
-    "#{tiles[0]}|#{tiles[1]}|#{tiles[2]}"
-  end
-
-  def overlapping?(row, column)
-    if(@@game_board[row][column] == nil)
-      false
-    else
-      puts "You cannot place a symbol on a tile that already has one."
-      true
-    end
-  end
-
-  def ask_player_for_placement(player_name)
-    answer = Array.new(2)  
-    print "#{player_name } which row you want to place the symbol?(1-3):"
-    answer[0] = ask_until_number_input()
-    print "which column you want to place the symbol?(1-3): "
-    answer[1] = ask_until_number_input()
-    answer
-  end
-
-  def ask_until_number_input
-    numbers = ["1","2","3"]
-    answer = gets.chomp
-    until numbers.include?(answer)
-      puts "type the number between 1-3"
-      answer = gets.chomp
-    end
-    answer.to_i - 1
-  end
-
-  def welcome_message
-    puts "welcome, you know how to play tic-tac-toe right? "
-    puts ""
-  end
-
-  def play_a_match
-    while @@game_done != true
-      players_turn(player_one)
-      break if @@game_done == true
-      players_turn(player_two)
-    end
-  end
-  
-  def players_turn(player)
-    player.player_turn
-    win_check(player)
-    @@number_of_moves += 1 
-    draw_check
-    @@game_done = true if @@number_of_moves == 9
-    
-  end
-
-  def win_check(player)
-    row_win_check(player)
-    column_check(player)
-    diagnal_check(player)
-    draw_check
-    if @@game_done == true 
-      puts " #{@@winner} is the winnner!"
-    end
-  end
-  
-  def row_win_check(player)
-    winning_patern = [player.symbol,player.symbol,player.symbol]
-    @@game_board.each do |row|
-      if row == winning_patern
-        @@game_done =true 
-        @@winner = player.name
-      end
-    end
-  end
-
-  def column_check(player)
-    winning_patern = [player.symbol,player.symbol,player.symbol]
-    3.times do |index|
-      if winning_patern == [@@game_board[0][index],@@game_board[1][index],@@game_board[2][index]] 
-        @@game_done =true 
-        @@winner = player.name
-      end
-    end
-  end
-
-  def diagnal_check(player)
-    winning_patern = [player.symbol,player.symbol,player.symbol]
-    diagnal_one = [@@game_board[0][0],@@game_board[1][1],@@game_board[2][2]]
-    diagnal_two = [@@game_board[0][2],@@game_board[1][1],@@game_board[2][0]]
-    @@game_done, @@winner = true, player.name if winning_patern == diagnal_one || winning_patern == diagnal_two
-  end
-
-  def draw_check
-    if @@number_of_moves == 9 && @@game_done == false
-      @@game_done = true 
-      puts "Draw, there is no winners"
-    end 
-  end
-  
-end
-
-class Player < TicTacToe
-  @@player_count = 1
-  attr_accessor :symbol, :name
-
-  def initialize(name,symbol)
-    print "plyer#{@@player_count} what is your name?: "
-    @name = gets.chomp
-    @symbol = symbol
-    puts "\nhello #{@name} welcome to the game "
-    puts ""
-    @@player_count += 1
-  end
-
-  def player_turn
-    answer = Array.new(2)
-    loop do
-      answer = ask_player_for_placement(name)
-      break unless overlapping?(answer[0],answer[1])
-    end
-    place_symbol(answer[0], answer[1], symbol)
-  end
-
-  
-
-end
-
-
-test = TicTacToe.new
-
-test.play_a_match
-# test.game_board[0][1] = "X"
-
-# a = Player.new(nil,"X")
-# b = Player.new(nil,"O")
-
-# test.player_one.player_turn
-# test.player_two.player_turn
-
-# test.draw_board()
